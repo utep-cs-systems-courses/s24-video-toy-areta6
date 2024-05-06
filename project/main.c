@@ -8,8 +8,13 @@ void main()
 {
   configureClocks(); //activating from timerlib
   switch_init();
-  led_init();
   buzzer_init();
+  led_init();
+  lcd_init();
 
-  or_sr(0x18);
+  enableWDTInterrupts();
+  or_sr(0x8);
+
+  clearScreen(COLOR_BLUE);
+  
 }
