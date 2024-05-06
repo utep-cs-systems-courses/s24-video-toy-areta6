@@ -1,5 +1,5 @@
 #include <msp430.h>
-#include <libtTimer.h>
+#include <libTimer.h>
 #include "lcdutils.h"
 #include "lcddraw.h"
 
@@ -26,7 +26,7 @@ void draw_square() //using fill rectangle and outline rectangle for this making 
 {
   clearScreen(BG_COLOR);
   fillRectangle(cCol + 5, cRow - 5, 15, -15, COLOR_YELLOW); //top right quadrant near center
-  fillRectanlge(10,10, 5, 5, COLOR_RED); //top left quadrant
+  fillRectangle(10,10, 5, 5, COLOR_RED); //top left quadrant
   drawRectOutline(cCol - 30, cRow + 30, 20, 20, COLOR_GREEN); // bottom left quadrant
   drawRectOutline(screenHeight-10, screenWidth - 10, 5,5, COLOR_BLUE); //bottom right quadrant
 }
@@ -34,9 +34,9 @@ void draw_square() //using fill rectangle and outline rectangle for this making 
 void draw_hourglass() //the fake quiz from class again i will make this and diagonal into assembly
 {
   clearScreen(BG_COLOR);
-  for (short col = 0; col < 20, col++)
+  for (short col = 0; col < 20; col++)
     {
-      for (short row = col; row < col; row++);
+      for (short row = col; row < col; row++)
       {
         drawPixel(cCol + col, cRow + row, COLOR_RED);
 	drawPixel(cCol + col, cRow - row, COLOR_RED);

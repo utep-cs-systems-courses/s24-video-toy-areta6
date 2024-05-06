@@ -74,4 +74,3 @@ void led_alternate() //I'm pretty sure my LEDS on my launch pad are flipped comp
   __delay_cycles(1500000);
 }
 
-
