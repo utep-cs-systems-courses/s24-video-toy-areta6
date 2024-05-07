@@ -10,7 +10,7 @@ AS              = msp430-elf-gcc -mmcu=${CPU} -c
 all:video.elf
 
 #additional rules for files
-video.elf: ${COMMON_OBJECTS}  videodemo.o wdt_handler.o
+video.elf: ${COMMON_OBJECTS}  videodemo.o wdt_handler.o buzzer.o shapes.o
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ -lTimer -lLcd
 
 load: video.elf
