@@ -101,7 +101,6 @@ void wdt_c_handler()
       else
 	step = 0;
       secCount = 0;
-      statePos = 0;//reset state pos to 0 
     }
     redrawScreen = 1;
   }
@@ -158,14 +157,12 @@ void screen_update_hourglass() //going to turn screen update hourglass into a fo
     {
       draw_hourglass();
       buzzer_tune();
-      buzzer_tune();
     }
   else if (statePos == 4)
     {
       draw_diagonal();
       buzzer_tune();
     }
-  }
 }
 
 void update_shape()
