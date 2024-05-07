@@ -2,8 +2,8 @@
 #include <libTimer.h>
 #include "lcdutils.h"
 #include "lcddraw.h"
-//#include "shapes.h"
-//#include "buzzer.h"
+#include "shapes.h"
+#include "buzzer.h"
 
 //pretty much noticed after trying to get it working beforehand that the wakedemo had it all build inside of it so i will try it with wakedemo.c
 
@@ -18,8 +18,8 @@
 
 #define SWITCHES 15
 
-char blue = 31, green = 0, red = 31;
-
+//char blue = 31, green = 0, red = 31; //no longer need this line
+char statePos = 0; //state position
 unsigned char step = 0;
 
 static char switch_update_interrupt_sense()
@@ -91,17 +91,18 @@ void wdt_c_handler()
 	controlPos[0] = newCol;
     }
     
-    {/* update hourglass */
-      if (switches & SW3) green = (green + 1) % 64;
-      if (switches & SW2) blue = (blue + 2) % 32;
-      if (switches & SW1) red = (red - 3) % 32;
+    {/* changed from update hourglass to states */
+      if (switches & SW4) statePos = 4;
+      if (switches & SW3) statePos = 3;
+      if (switches & SW2) statePos = 2;
+      if (switches & SW1) statePos = 1;
       if (step <= 30)
 	step ++;
       else
 	step = 0;
       secCount = 0;
+      statePos = 0;//reset state pos to 0 
     }
-    if (switches & SW4) return;
     redrawScreen = 1;
   }
 }
@@ -115,7 +116,7 @@ void main()
   configureClocks();
   lcd_init();
   switch_init();
-  //buzzer_init();
+  buzzer_init();
 
   enableWDTInterrupts();
   or_sr(0x8); //GIE
@@ -128,29 +129,41 @@ void main()
 	  redrawScreen = 0;
 	  update_shape();
 	}
+      P1OUT &= ~LED;
+      or_sr(0x10);
+      P1OUT |= LED;
     }
 }
 
-void screen_update_hourglass()
+void screen_update_hourglass() //going to turn screen update hourglass into a form of state machine
 {
-
-  static unsigned char row = screenHeight / 2, col = screenWidth / 2;
-  static char lastStep = 0;
-
+  //static unsigned char row = screenHeight / 2, col = screenWidth / 2;
+  static char lastStep = 0; //still want it to clean screen after a few seconds 
   if (step == 0 || (lastStep > step)) {
-    clearScreen(COLOR_BLUE);
-    lastStep = 0;    
-  } else {
-    for (; lastStep <= step; lastStep++) {
-      int startCol = col - lastStep;
-      int endCol = col + lastStep;
-      int width = 1 + endCol - startCol;
-
-      // a color in this BGR encoding is BBBB BGGG GGGR RRRR
-      unsigned int color = (blue << 11) | (green << 5) | red;
-
-      fillRectangle(startCol, row+lastStep, width, 1, color);
-      fillRectangle(startCol, row-lastStep, width, 1, color);
+    clearScreen(COLOR_BLACK);
+    lastStep = 0;
+    statePos = 0;
+  }
+  else if (statePos == 1)
+    {
+      draw_triangle();
+      buzzer_tune();
+    }
+  else if (statePos == 2)
+    {
+      draw_square();
+      buzzer_tune();
+    }
+  else if (statePos == 3)
+    {
+      draw_hourglass();
+      buzzer_tune();
+      buzzer_tune();
+    }
+  else if (statePos == 4)
+    {
+      draw_diagonal();
+      buzzer_tune();
     }
   }
 }
