@@ -1,6 +1,6 @@
 # Video Toy
 
-##Instructions for running
+## Instructions for running
 
 make all
 
